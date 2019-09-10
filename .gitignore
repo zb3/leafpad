@@ -12,3 +12,11 @@ po/Makefile.in
 po/POTFILES
 
 .deps/
+.intltool-merge-cache
+
+*.o
+*.gmo
+
+src/leafpad
+
+data/leafpad.desktop
