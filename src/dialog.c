@@ -36,6 +36,7 @@ void run_dialog_message(GtkWidget *window,
 		GTK_DIALOG_DESTROY_WITH_PARENT,
 		type,
 		GTK_BUTTONS_NONE,
+		"%s",
 		str);
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 	gtk_dialog_add_buttons(GTK_DIALOG(dialog),
@@ -61,6 +62,7 @@ GtkWidget *create_dialog_message_question(GtkWidget *window, gchar *message, ...
 		GTK_DIALOG_DESTROY_WITH_PARENT,
 		GTK_MESSAGE_QUESTION,
 		GTK_BUTTONS_NONE,
+		"%s",
 		str);
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 	gtk_dialog_add_buttons(GTK_DIALOG(dialog),
