@@ -151,6 +151,7 @@ static gint document_replace_real(GtkWidget *textview)
 	GtkWidget *q_dialog = NULL;
 	GtkSourceSearchFlags search_flags = GTK_SOURCE_SEARCH_VISIBLE_ONLY | GTK_SOURCE_SEARCH_TEXT_ONLY;	
 	GtkTextBuffer *textbuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textview));
+	gboolean did_replace = FALSE;
 	
 	if (!match_case)
 		search_flags = search_flags | GTK_SOURCE_SEARCH_CASE_INSENSITIVE;
@@ -211,6 +212,12 @@ static gint document_replace_real(GtkWidget *textview)
 					continue;
 				}
 			}
+			
+			if (!did_replace) {
+				undo_set_sequency(FALSE);
+				did_replace = TRUE;
+			}
+			
 			gtk_text_buffer_delete_selection(textbuffer, TRUE, TRUE);
 			if (strlen(string_replace)) {
 				gtk_text_buffer_get_iter_at_mark(
