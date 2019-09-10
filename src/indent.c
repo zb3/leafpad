@@ -70,7 +70,10 @@ void indent_real(GtkWidget *text_view)
 	GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
 	
 	g_signal_emit_by_name(G_OBJECT(buffer), "begin-user-action");
-	gtk_text_buffer_delete_selection(buffer, TRUE, TRUE);
+	
+	// interactive must be FALSE here, otherwise it 'll emit the end-user-action signal
+	gtk_text_buffer_delete_selection(buffer, FALSE, TRUE);
+	
 	gtk_text_buffer_get_iter_at_mark(buffer, &iter, gtk_text_buffer_get_insert(buffer));
 	ind = compute_indentation(buffer, &iter, gtk_text_iter_get_line(&iter));
 	str = g_strconcat("\n", ind, NULL);
