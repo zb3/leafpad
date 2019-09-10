@@ -217,6 +217,16 @@ void on_edit_select_all(void)
 //	g_signal_emit_by_name(G_OBJECT(pub->mw->view), "select-all");
 }
 
+void on_edit_indent(void)
+{
+	indent_multi_line_indent(pub->mw->buffer);
+}
+
+void on_edit_unindent(void)
+{
+	indent_multi_line_unindent(pub->mw->buffer);
+}
+
 static void activate_quick_find(void)
 {
 	GtkItemFactory *ifactory;

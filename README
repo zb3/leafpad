@@ -65,5 +65,7 @@ Ctrl-H (Ctrl-R)                 Replace
 Ctrl-J                          Jump To
 Ctrl-T                          Always on Top
 Ctrl-Tab                        toggle tab width
+Ctrl-]                          multi-line indent
+Ctrl-[                          multi-line unindent
 Tab with selection bound        multi-line indent
 Shift-Tab with selection bound  multi-line unindent

@@ -74,6 +74,15 @@ static GtkItemFactoryEntry menu_items[] =
 		NULL, 0, "<Separator>" },
 	{ N_("/Edit/Select _All"), "<control>A",
 		G_CALLBACK(on_edit_select_all), 0 },
+	{ "/Edit/---", NULL,
+		NULL, 0, "<Separator>" },
+	
+	// todo: add translations for those
+	{ N_("/Edit/_Indent selection"), "<control>bracketright",
+		G_CALLBACK(on_edit_indent), 0, "<StockItem>", GTK_STOCK_INDENT },
+	{ N_("/Edit/_Unindent selection"), "<control>bracketleft",
+		G_CALLBACK(on_edit_unindent), 0, "<StockItem>", GTK_STOCK_UNINDENT },
+	
 	{ N_("/_Search"),	 NULL,
 		NULL, 0, "<Branch>" },
 	{ N_("/Search/_Find..."), "<control>F",
