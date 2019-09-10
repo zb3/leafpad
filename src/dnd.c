@@ -38,10 +38,6 @@ enum {
 
 static GtkTargetEntry drag_types[] =
 {
-#if !GTK_CHECK_VERSION(2, 10, 0)
-//	{ "application/x-gtk-text-buffer-rich-text", GTK_TARGET_SAME_WIDGET, TARGET_SELF },
-	{ "GTK_TEXT_BUFFER_CONTENTS", GTK_TARGET_SAME_WIDGET, TARGET_SELF },
-#endif
 	{ "UTF8_STRING", 0, TARGET_UTF8_STRING },
 	{ "COMPOUND_TEXT", 0, TARGET_COMPOUND_TEXT },
 	{ "text/plain", 0, TARGET_PLAIN },
@@ -149,11 +145,8 @@ DV(g_print(">%s\n", comline));
 	else {
 		clear_current_keyval();
 		undo_set_sequency(FALSE);
-#if GTK_CHECK_VERSION(2, 10, 0)
-		if (info == TARGET_UTF8_STRING) {
-#else
-		if (info == TARGET_SELF) {
-#endif
+
+		if (gtk_drag_get_source_widget(context) == widget) {
 			undo_set_sequency_reserve();
 			context->action = GDK_ACTION_MOVE;
 		} else if (info == TARGET_PLAIN 
