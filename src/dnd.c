@@ -143,7 +143,6 @@ DV(g_print(">%s\n", comline));
 		g_strfreev(files);
 	}
 	else {
-		clear_current_keyval();
 		undo_set_sequency(FALSE);
 
 		if (gtk_drag_get_source_widget(context) == widget) {

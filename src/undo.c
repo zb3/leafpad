@@ -177,7 +177,6 @@ static void cb_delete_range(GtkTextBuffer *buffer, GtkTextIter *start_iter, GtkT
 {
 	gint start, end;
 	gchar command;
-	
 DV(	g_print("delete-range\n"));
 	start = gtk_text_iter_get_offset(start_iter);
 	end = gtk_text_iter_get_offset(end_iter);
@@ -279,6 +278,18 @@ void undo_init(GtkWidget *view, GtkWidget *undo_button, GtkWidget *redo_button)
 
 void undo_set_sequency(gboolean seq)
 {
+	if (!seq) {
+		// we must clear these, otherwise undo_append_undo_info will
+		// restore sequency flag for the next undo item
+		clear_current_keyval();
+		prev_keyval = 0;
+	}
+	
+	if (undo_gstr->len) {
+		// the item we want to affect doesn't exist, so create it first
+		undo_flush_temporal_buffer(NULL);
+	}
+	
 	if (g_list_length(undo_list))
 		((UndoInfo *)g_list_last(undo_list)->data)->seq = seq;
 DV(g_print("<undo_set_sequency: %d>\n", seq));	
