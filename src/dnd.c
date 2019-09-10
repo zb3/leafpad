@@ -52,7 +52,7 @@ static gint n_drag_types = sizeof(drag_types) / sizeof(drag_types[0]);
 
 void dnd_init(GtkWidget *widget)
 {
-	gtk_drag_dest_set(widget, GTK_DEST_DEFAULT_ALL,
+	gtk_drag_dest_set(widget, GTK_DEST_DEFAULT_ALL &~ GTK_DEST_DEFAULT_DROP,
 		drag_types, n_drag_types, GDK_ACTION_COPY);
 	g_signal_connect(G_OBJECT(widget), "drag_data_received",
 		G_CALLBACK(dnd_drag_data_recieved_handler), NULL);
@@ -87,7 +87,6 @@ static void dnd_drag_data_recieved_handler(GtkWidget *widget,
 	GdkDragContext *context, gint x, gint y,
 	GtkSelectionData *selection_data, guint info, guint time)
 {
-	static gboolean flag_called_once = FALSE;
 	gchar **files;
 	gchar *filename;
 	gchar *comline;
@@ -98,21 +97,6 @@ static void dnd_drag_data_recieved_handler(GtkWidget *widget,
 	j = 1;
 #endif
 DV(g_print("DND start!\n"));
-	
-#if GTK_CHECK_VERSION(2, 10, 0)
-	if (g_strcasecmp(gdk_atom_name(context->targets->data),
-	    "GTK_TEXT_BUFFER_CONTENTS") != 0) {
-#else
-	if (info != TARGET_SELF) {
-#endif
-		if (flag_called_once) {
-			flag_called_once = FALSE;
-			g_signal_stop_emission_by_name(widget, "drag_data_received");
-DV(g_print("second drop signal killed.\n"));
-			return;
-		} else
-			flag_called_once = TRUE;
-	}
 	
 DV({	
 	g_print("info                      = %d\n", info);
