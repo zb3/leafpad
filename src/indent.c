@@ -62,6 +62,17 @@ static gchar *compute_indentation(GtkTextBuffer *buffer, GtkTextIter *iter, gint
 	return gtk_text_iter_get_text(&start_iter, &end_iter);
 }
 
+static gunichar first_char_in_line(GtkTextBuffer *buffer, gint line)
+{
+	GtkTextIter iter;
+	gunichar ch;
+	
+	gtk_text_buffer_get_iter_at_line(buffer, &iter, line);
+	ch = gtk_text_iter_get_char(&iter);
+	
+	return ch;
+}
+
 void indent_real(GtkWidget *text_view)
 {
 	GtkTextIter iter;
@@ -142,26 +153,44 @@ void indent_multi_line_indent(GtkTextBuffer *buffer)
 {
 	GtkTextIter start_iter, end_iter, iter;
 	gint start_line, end_line, i;
-	gboolean pos;
+	gboolean selection_rtl;
 	
 	gtk_text_buffer_get_selection_bounds(buffer, &start_iter, &end_iter);
 	start_line = gtk_text_iter_get_line(&start_iter);
+	
 	end_line = gtk_text_iter_get_line(&end_iter);
+	gint end_offset = gtk_text_iter_get_line_offset(&end_iter);
+	
+	if (end_offset) end_line++;
+	
 	gtk_text_buffer_get_iter_at_mark(buffer, &iter, gtk_text_buffer_get_insert(buffer));
-	pos = gtk_text_iter_equal(&iter, &start_iter);
+	selection_rtl = gtk_text_iter_equal(&iter, &start_iter);
+	
+
+	gchar *indent = first_char_in_line(buffer, start_line) == '\t' ? "\t" : " ";
+
+	undo_set_sequency(FALSE);
 	for (i = start_line; i < end_line; i++) {
 		gtk_text_buffer_get_iter_at_line(buffer, &iter, i);
-		gtk_text_buffer_place_cursor(buffer, &iter);
 		g_signal_emit_by_name(G_OBJECT(buffer), "begin-user-action");
-		gtk_text_buffer_insert(buffer, &iter, "\t", 1);
+		gtk_text_buffer_insert(buffer, &iter, indent, 1);
 		g_signal_emit_by_name(G_OBJECT(buffer), "end-user-action");
 		undo_set_sequency(TRUE);
 	}
 	undo_set_sequency(FALSE);
 	
+	
 	gtk_text_buffer_get_iter_at_line(buffer, &start_iter, start_line);
-	gtk_text_buffer_get_iter_at_line(buffer, &end_iter, end_line);
-	if (pos) {
+	
+	gint line_count = gtk_text_buffer_get_line_count(buffer);
+	
+	if (end_line < line_count) {
+		gtk_text_buffer_get_iter_at_line(buffer, &end_iter, end_line);
+	} else {
+		gtk_text_buffer_get_end_iter(buffer, &end_iter);
+	}
+
+	if (selection_rtl) {
 		gtk_text_buffer_place_cursor(buffer, &end_iter);
 		gtk_text_buffer_move_mark_by_name(buffer, "insert", &start_iter);
 	} else {
@@ -170,53 +199,57 @@ void indent_multi_line_indent(GtkTextBuffer *buffer)
 	}
 }
 
-static gint compute_indent_offset_length(const gchar *ind)
-{
-	guint8 c = *ind;
-	gint len = 1;
-	
-	if (c == 0x20)
-		while ((len < current_tab_width) && (c = *++ind) == 0x20)
-			len++;
-	
-	return len;
-}
 
 void indent_multi_line_unindent(GtkTextBuffer *buffer)
 {
 	GtkTextIter start_iter, end_iter, iter;
-	gint start_line, end_line, i, len;
-	gboolean pos;
-	gchar *ind;
+	gint start_line, end_line, i;
+	gboolean selection_rtl;
 	
 	gtk_text_buffer_get_selection_bounds(buffer, &start_iter, &end_iter);
 	start_line = gtk_text_iter_get_line(&start_iter);
+	
 	end_line = gtk_text_iter_get_line(&end_iter);
+	gint end_offset = gtk_text_iter_get_line_offset(&end_iter);
+	
+	if (end_offset) end_line++;
+	
 	gtk_text_buffer_get_iter_at_mark(buffer, &iter, gtk_text_buffer_get_insert(buffer));
-	pos = gtk_text_iter_equal(&iter, &start_iter);
-	i = start_line;
-	do {
-		ind = compute_indentation(buffer, NULL, i);
-		if (ind && strlen(ind)) {
-			len = compute_indent_offset_length(ind);
-			gtk_text_buffer_get_iter_at_line(buffer, &start_iter, i);
-			gtk_text_buffer_place_cursor(buffer, &start_iter);
-			end_iter = start_iter;
-			gtk_text_iter_forward_chars(&end_iter, len);
-			gtk_text_buffer_move_mark_by_name(buffer, "insert", &end_iter);
-			g_signal_emit_by_name(G_OBJECT(buffer), "begin-user-action");
-			gtk_text_buffer_delete(buffer, &start_iter, &end_iter);
-			g_signal_emit_by_name(G_OBJECT(buffer), "end-user-action");
-			undo_set_sequency(TRUE);
-			g_free(ind);
-		}
-		i++;
-	} while (i < end_line);
+	
+	selection_rtl = gtk_text_iter_equal(&iter, &start_iter);
+
+
+	undo_set_sequency(FALSE);
+	for (i = start_line; i < end_line; i++) {
+		gunichar first_char = first_char_in_line(buffer, i);
+		gchar *indent = first_char == ' ' ? " " : first_char == '\t' ? "\t" : NULL;
+		
+		if (!indent) continue;
+	
+		gtk_text_buffer_get_iter_at_line(buffer, &start_iter, i);
+		
+		end_iter = start_iter;
+		gtk_text_iter_forward_char(&end_iter);
+
+		g_signal_emit_by_name(G_OBJECT(buffer), "begin-user-action");
+		gtk_text_buffer_delete(buffer, &start_iter, &end_iter);
+		g_signal_emit_by_name(G_OBJECT(buffer), "end-user-action");
+		undo_set_sequency(TRUE);
+	}
 	undo_set_sequency(FALSE);
 	
+	
 	gtk_text_buffer_get_iter_at_line(buffer, &start_iter, start_line);
-	gtk_text_buffer_get_iter_at_line(buffer, &end_iter, end_line);
-	if (pos) {
+	
+	gint line_count = gtk_text_buffer_get_line_count(buffer);
+	
+	if (end_line < line_count) {
+		gtk_text_buffer_get_iter_at_line(buffer, &end_iter, end_line);
+	} else {
+		gtk_text_buffer_get_end_iter(buffer, &end_iter);
+	}
+	
+	if (selection_rtl) {
 		gtk_text_buffer_place_cursor(buffer, &end_iter);
 		gtk_text_buffer_move_mark_by_name(buffer, "insert", &start_iter);
 	} else {
@@ -224,4 +257,3 @@ void indent_multi_line_unindent(GtkTextBuffer *buffer)
 		gtk_text_buffer_move_mark_by_name(buffer, "insert", &end_iter);
 	}
 }
-
