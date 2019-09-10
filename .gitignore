@@ -1,0 +1,14 @@
+# at this point, only configure and make artifacts are ignored
+# upstream autoreconf artifacts aren't regenerated, so they're not ignored
+
+Makefile
+
+config.h
+config.log
+config.status
+stamp-*
+
+po/Makefile.in
+po/POTFILES
+
+.deps/
