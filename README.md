@@ -1,3 +1,5 @@
+**Note from zb3:** This repo exists because I wanted to fix some issues and make multiline indent more universal. I don't plan to add any new features here, but I'll try to fix bugs I encounter. Other bug fixes also welcome.
+
 # Leafpad
 GTK+ based simple text editor
 
