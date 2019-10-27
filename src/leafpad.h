@@ -41,6 +41,7 @@
 #include "font.h"
 #include "linenum.h"
 #include "indent.h"
+#include "indentnavigation.h"
 #include "hlight.h"
 #include "selector.h"
 #include "file.h"

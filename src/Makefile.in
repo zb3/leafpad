@@ -50,6 +50,7 @@ am_leafpad_OBJECTS = leafpad-main.$(OBJEXT) leafpad-window.$(OBJEXT) \
 	leafpad-view.$(OBJEXT) leafpad-undo.$(OBJEXT) \
 	leafpad-font.$(OBJEXT) leafpad-linenum.$(OBJEXT) \
 	leafpad-indent.$(OBJEXT) leafpad-hlight.$(OBJEXT) \
+	leafpad-indentnavigation.$(OBJEXT) \
 	leafpad-selector.$(OBJEXT) leafpad-file.$(OBJEXT) \
 	leafpad-encoding.$(OBJEXT) leafpad-search.$(OBJEXT) \
 	leafpad-dialog.$(OBJEXT) leafpad-gtkprint.$(OBJEXT) \
@@ -202,6 +203,7 @@ leafpad_SOURCES = \
 	font.h font.c \
 	linenum.h linenum.c \
 	indent.h indent.c \
+	indentnavigation.h indentnavigation.c \
 	hlight.h hlight.c \
 	selector.h selector.c \
 	file.h file.c \
@@ -313,6 +315,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/leafpad-gtksourceiter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/leafpad-hlight.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/leafpad-indent.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/leafpad-indentnavigation.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/leafpad-linenum.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/leafpad-main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/leafpad-menu.Po@am__quote@
@@ -462,6 +465,20 @@ leafpad-indent.obj: indent.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='indent.c' object='leafpad-indent.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(leafpad_CFLAGS) $(CFLAGS) -c -o leafpad-indent.obj `if test -f 'indent.c'; then $(CYGPATH_W) 'indent.c'; else $(CYGPATH_W) '$(srcdir)/indent.c'; fi`
+
+leafpad-indentnavigation.o: indentnavigation.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(leafpad_CFLAGS) $(CFLAGS) -MT leafpad-indentnavigation.o -MD -MP -MF $(DEPDIR)/leafpad-indentnavigation.Tpo -c -o leafpad-indentnavigation.o `test -f 'indentnavigation.c' || echo '$(srcdir)/'`indentnavigation.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/leafpad-indentnavigation.Tpo $(DEPDIR)/leafpad-indentnavigation.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='indentnavigation.c' object='leafpad-indentnavigation.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(leafpad_CFLAGS) $(CFLAGS) -c -o leafpad-indentnavigation.o `test -f 'indentnavigation.c' || echo '$(srcdir)/'`indentnavigation.c
+
+leafpad-indentnavigation.obj: indentnavigation.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(leafpad_CFLAGS) $(CFLAGS) -MT leafpad-indentnavigation.obj -MD -MP -MF $(DEPDIR)/leafpad-indentnavigation.Tpo -c -o leafpad-indentnavigation.obj `if test -f 'indentnavigation.c'; then $(CYGPATH_W) 'indentnavigation.c'; else $(CYGPATH_W) '$(srcdir)/indentnavigation.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/leafpad-indentnavigation.Tpo $(DEPDIR)/leafpad-indentnavigation.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='indentnavigation.c' object='leafpad-indentnavigation.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(leafpad_CFLAGS) $(CFLAGS) -c -o leafpad-indentnavigation.obj `if test -f 'indentnavigation.c'; then $(CYGPATH_W) 'indentnavigation.c'; else $(CYGPATH_W) '$(srcdir)/indentnavigation.c'; fi`
 
 leafpad-hlight.o: hlight.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(leafpad_CFLAGS) $(CFLAGS) -MT leafpad-hlight.o -MD -MP -MF $(DEPDIR)/leafpad-hlight.Tpo -c -o leafpad-hlight.o `test -f 'hlight.c' || echo '$(srcdir)/'`hlight.c

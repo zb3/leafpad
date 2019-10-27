@@ -137,6 +137,11 @@ static gboolean cb_key_press_event(GtkWidget *view, GdkEventKey *event)
 			}
 			return TRUE;
 		}
+		
+		if (indent_navigation_handle_arrow_key_press(GTK_TEXT_VIEW(view), event)) {
+			return TRUE;
+		}
+		
 		break;
 	case GDK_Page_Up:
 	case GDK_Page_Down:
@@ -202,6 +207,10 @@ static gboolean cb_button_press_event(GtkWidget *view, GdkEventButton *event)
 	
 	GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(view));
 	
+	if (indent_navigation_handle_button_press(GTK_TEXT_VIEW(view), event)) {
+		return TRUE;
+	}
+	
 	if ((event->button) == 3 && (event->type == GDK_BUTTON_PRESS)) {
 		gtk_text_view_window_to_buffer_coords(GTK_TEXT_VIEW(view),
 			gtk_text_view_get_window_type(GTK_TEXT_VIEW(view), event->window),
@@ -213,6 +222,11 @@ static gboolean cb_button_press_event(GtkWidget *view, GdkEventButton *event)
 	}
 	
 	return FALSE;
+}
+
+static gboolean cb_scroll_event(GtkWidget *view, GdkEventScroll *event)
+{
+	return indent_navigation_handle_scroll(GTK_TEXT_VIEW(view), event);
 }
 
 static void cb_modified_changed(GtkTextBuffer *buffer, GtkWidget *view)
@@ -332,6 +346,8 @@ GtkWidget *create_text_view(void)
 		G_CALLBACK(cb_key_press_event), NULL);
 	g_signal_connect(G_OBJECT(view), "button-press-event",
 		G_CALLBACK(cb_button_press_event), NULL);
+	g_signal_connect(G_OBJECT(view), "scroll-event",
+		G_CALLBACK(cb_scroll_event), NULL);
 	g_signal_connect_after(G_OBJECT(view), "cut-clipboard",
 		G_CALLBACK(menu_sensitivity_from_clipboard), NULL);
 	g_signal_connect_after(G_OBJECT(view), "copy-clipboard",
