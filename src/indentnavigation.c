@@ -40,7 +40,7 @@ static gint get_indent_level_and_iter(GtkTextBuffer *buffer, GtkTextIter *iter, 
 	}
 	
 	if (skip_empty_line && (!ch || ch == '\n'))
-		level--;
+		level = -1;
 	 
 	return level;
 }
