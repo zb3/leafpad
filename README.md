@@ -67,4 +67,6 @@ See the file `INSTALL` for more detailed information.
 | <kbd>Ctrl</kbd> + <kbd>Tab</kbd> | Toggle tab width | 
 | <kbd>Tab</kbd> with selection bound <br> <kbd>Ctrl</kbd> + <kbd>]</kbd> | Multi-line indent |
 | <kbd>Shift</kbd> + <kbd>Tab</kbd> with selection bound <br> <kbd>Ctrl</kbd> + <kbd>[</kbd>   | Multi-line unindent | 
+| <kbd>Ctrl</kbd> + Scroll Up/Down <br> <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>Up</kbd> / <kbd>Down</kbd><br> <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + Left/Right click | Jump to the previous/next line with the same or lower (whichever occurs first)<br>indentation level as the current line. |
+| <kbd>Shift</kbd> + <kbd>Alt</kbd> + Scroll Up/Down <br> <kbd>Shift</kbd> + <kbd>Alt</kbd> + <kbd>Up</kbd> / <kbd>Down</kbd> <br> <kbd>Shift</kbd> + <kbd>Alt</kbd> + Left/Right click | Jump to the previous/next line with an indentation level lower than the current line. |
 
