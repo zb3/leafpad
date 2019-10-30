@@ -82,6 +82,10 @@ static GtkItemFactoryEntry menu_items[] =
 		G_CALLBACK(on_edit_indent), 0, "<StockItem>", GTK_STOCK_INDENT },
 	{ N_("/Edit/_Unindent selection"), "<control>bracketleft",
 		G_CALLBACK(on_edit_unindent), 0, "<StockItem>", GTK_STOCK_UNINDENT },
+	{ "/Edit/---", NULL,
+		NULL, 0, "<Separator>" },
+	{ N_("/Edit/_Strip trailing whitespace"), "<shift><control>R",
+		G_CALLBACK(on_edit_strip_trailing_whitespace), 0 },
 	
 	{ N_("/_Search"),	 NULL,
 		NULL, 0, "<Branch>" },

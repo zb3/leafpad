@@ -24,5 +24,6 @@
 gchar *gedit_utils_get_stdin(void);
 #endif
 GtkWidget *create_button_with_stock_image(const gchar *text, const gchar *stock_id);
+gint strip_trailing_whitespace(GtkTextBuffer *buffer);
 
 #endif /* _UTILS_H */

@@ -24,6 +24,8 @@
 #include <sys/time.h>
 #include <unistd.h>
 
+#include <undo.h>
+
 #define STDIN_DELAY_MICROSECONDS 100000
 #define GEDIT_STDIN_BUFSIZE 1024
 
@@ -100,3 +102,46 @@ GtkWidget *create_button_with_stock_image(const gchar *text, const gchar *stock_
 	
 	return button;
 }
+
+gint strip_trailing_whitespace(GtkTextBuffer *buffer)
+{
+	GtkTextIter cur, end, space_start;
+	gboolean trailing_whitespace = FALSE;
+	gint char_count = 0, lines_modified = 0;
+	gunichar ch;
+
+	if (!gtk_text_buffer_get_selection_bounds(buffer, &cur, &end))
+		gtk_text_buffer_get_bounds(buffer, &cur, &end);
+
+	char_count = gtk_text_iter_get_offset(&end) - gtk_text_iter_get_offset(&cur);
+	undo_set_sequency(FALSE);
+	g_signal_emit_by_name(G_OBJECT(buffer), "begin-user-action");
+
+	while (char_count --> 0) {
+		ch = gtk_text_iter_get_char(&cur);
+
+		if (ch == '\r' || ch == '\n') {
+			if (trailing_whitespace) {
+				gtk_text_buffer_delete(buffer, &space_start, &cur);
+				undo_set_sequency(TRUE);
+				trailing_whitespace = FALSE;
+				lines_modified++;
+			}
+		} else if (ch == ' ' || ch == '\t') {
+			if (!trailing_whitespace) {
+				trailing_whitespace = TRUE;
+				space_start = cur;
+			}
+		} else {
+			trailing_whitespace = FALSE;
+		}
+
+		gtk_text_iter_forward_char(&cur);
+	}
+
+	g_signal_emit_by_name(G_OBJECT(buffer), "end-user-action");
+	undo_set_sequency(FALSE);
+
+	return lines_modified;
+}
+

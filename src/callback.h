@@ -37,6 +37,7 @@ void on_edit_delete(void);
 void on_edit_select_all(void);
 void on_edit_indent(void);
 void on_edit_unindent(void);
+void on_edit_strip_trailing_whitespace(void);
 void on_search_find(void);
 void on_search_find_next(void);
 void on_search_find_previous(void);

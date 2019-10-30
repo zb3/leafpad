@@ -227,6 +227,11 @@ void on_edit_unindent(void)
 	indent_multi_line_unindent(pub->mw->buffer);
 }
 
+void on_edit_strip_trailing_whitespace(void)
+{
+	strip_trailing_whitespace(pub->mw->buffer);
+}
+
 static void activate_quick_find(void)
 {
 	GtkItemFactory *ifactory;
