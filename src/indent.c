@@ -257,3 +257,136 @@ void indent_multi_line_unindent(GtkTextBuffer *buffer)
 		gtk_text_buffer_move_mark_by_name(buffer, "insert", &end_iter);
 	}
 }
+
+typedef struct {
+	GtkTextView *view;
+	GtkTextBuffer *buffer;
+
+} IndentPasteData;
+
+static gint compute_text_base_indent_level(const gchar *text)
+{
+	gint min_indent = -1, cur_indent = 0;
+	gchar ch;
+
+	while((ch = *text)) {
+		if (ch == '\r' || ch == '\n')
+			cur_indent = 0;
+		else if (cur_indent >=0 && (ch == ' ' || ch == '\t'))
+			cur_indent++;
+		else if (cur_indent != -1) {
+			if (min_indent == -1 || cur_indent < min_indent)
+				min_indent = cur_indent;
+
+			cur_indent = -1;
+		}
+
+		text++;
+	}
+
+	return min_indent == -1 ? 0 : min_indent;
+}
+
+static void do_indent_paste(GtkTextView *view, GtkTextBuffer *buffer, const gchar *text)
+{
+	GtkTextIter iter, start, end;
+	const gchar *text_ptr = text;
+	const gchar *text_line_start = text;
+	gint base_indent;
+	gint insert_len;
+	gboolean first_line_inserted = FALSE;
+	gchar *indent;
+	gchar ch;
+
+	// all lengths here are in bytes, but text is assumed to be utf8 encoded
+
+	undo_set_sequency(FALSE);
+	g_signal_emit_by_name(G_OBJECT(buffer), "begin-user-action");
+
+	if (gtk_text_buffer_get_selection_bounds(buffer, &start, &end)) {
+		gtk_text_buffer_delete(buffer, &start, &end);
+		undo_set_sequency(FALSE);
+	}
+
+	gtk_text_buffer_get_iter_at_mark(buffer, &iter, gtk_text_buffer_get_insert(buffer));
+	indent = compute_indentation(buffer, &iter, gtk_text_iter_get_line(&iter));
+
+	base_indent = compute_text_base_indent_level(text);
+
+	for(;;) {
+		ch = *text_ptr;
+
+		if (!ch || ch == '\r' || ch == '\n') {
+			if (ch == '\r' && *(text_ptr+1) == '\n')
+				text_ptr++;
+
+			// from text start to textptr might contain nl
+			// we want it to do so
+			if (indent) {
+				if (first_line_inserted) {
+					gtk_text_buffer_insert(buffer, &iter, indent, -1);
+					undo_set_sequency(TRUE);
+				} else
+					first_line_inserted = TRUE;
+			}
+
+			// base length (without newline)
+			insert_len = text_ptr - text_line_start;
+
+			// now we want to subtract base indent, but only if present
+			// blank lines won't have it
+			if (base_indent && insert_len >= base_indent) {
+				text_line_start += base_indent;
+				insert_len -= base_indent;
+			}
+
+			// we want to include ch if it's a newline char
+			// but not when it's a null byte
+			if (ch)
+				insert_len++;
+
+			gtk_text_buffer_insert(buffer, &iter, text_line_start, insert_len);
+			undo_set_sequency(TRUE);
+
+			text_line_start = text_ptr+1;
+		}
+
+		if (!ch)
+			break;
+
+		text_ptr++;
+	}
+
+	g_signal_emit_by_name(G_OBJECT(buffer), "end-user-action");
+	undo_set_sequency(FALSE);
+
+	gtk_text_view_scroll_mark_onscreen(view, gtk_text_buffer_get_insert(buffer));
+	g_free(indent);
+}
+
+static void indent_paste_text_received(GtkClipboard *clipboard, const gchar *text,
+									   gpointer data)
+{
+	IndentPasteData *paste_data = data;
+
+	if (text)
+		do_indent_paste(paste_data->view, paste_data->buffer, text);
+
+	g_object_unref(paste_data->buffer);
+	g_object_unref(paste_data->view);
+	g_slice_free(IndentPasteData, paste_data);
+}
+
+void indent_paste(GtkTextView *view, gboolean primary)
+{
+	GtkClipboard *clipboard = gtk_widget_get_clipboard(GTK_WIDGET(view), primary ?
+										GDK_SELECTION_PRIMARY : GDK_SELECTION_CLIPBOARD);
+	GtkTextBuffer *buffer = gtk_text_view_get_buffer(view);
+	IndentPasteData *data = g_slice_new(IndentPasteData);
+
+	data->buffer = g_object_ref(buffer);
+	data->view = g_object_ref(view);
+
+	gtk_clipboard_request_text(clipboard, indent_paste_text_received, data);
+}
+

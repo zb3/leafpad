@@ -33,6 +33,7 @@ void on_edit_redo(void);
 void on_edit_cut(void);
 void on_edit_copy(void);
 void on_edit_paste(void);
+void on_edit_paste_with_indent(void);
 void on_edit_delete(void);
 void on_edit_select_all(void);
 void on_edit_indent(void);

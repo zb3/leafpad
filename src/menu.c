@@ -68,6 +68,8 @@ static GtkItemFactoryEntry menu_items[] =
 		G_CALLBACK(on_edit_copy), 0, "<StockItem>", GTK_STOCK_COPY },
 	{ N_("/Edit/_Paste"), "<control>V",
 		G_CALLBACK(on_edit_paste), 0, "<StockItem>", GTK_STOCK_PASTE },
+	{ N_("/Edit/Paste with i_ndent"), "<shift><control>V",
+		G_CALLBACK(on_edit_paste_with_indent), 0, "<StockItem>", GTK_STOCK_PASTE },
 	{ N_("/Edit/_Delete"), NULL,
 		G_CALLBACK(on_edit_delete), 0, "<StockItem>", GTK_STOCK_DELETE },
 	{ "/Edit/---", NULL,

@@ -206,6 +206,11 @@ void on_edit_paste(void)
 		gtk_text_buffer_get_insert(pub->mw->buffer));
 */}
 
+void on_edit_paste_with_indent(void)
+{
+	indent_paste(GTK_TEXT_VIEW(pub->mw->view), FALSE);
+}
+
 void on_edit_delete(void)
 {
 	gtk_text_buffer_delete_selection(pub->mw->buffer, TRUE, TRUE);
