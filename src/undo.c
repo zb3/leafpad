@@ -168,7 +168,7 @@ gint len)
 	
 DV(	g_print("insert-text\n"));
 	end = gtk_text_iter_get_offset(iter);
-	start = end - g_utf8_strlen(str, -1);
+	start = end - g_utf8_strlen(str, len);
 	
 	undo_create_undo_info(buffer, INS, start, end);
 }
