@@ -138,10 +138,17 @@ static gboolean cb_key_press_event(GtkWidget *view, GdkEventKey *event)
 			return TRUE;
 		}
 		
-		if (indent_navigation_handle_arrow_key_press(GTK_TEXT_VIEW(view), event)) {
+		if (indent_navigation_handle_key_press(GTK_TEXT_VIEW(view), event)) {
 			return TRUE;
 		}
-		
+
+		break;
+	case GDK_Right:
+	case GDK_Insert:
+		if (indent_navigation_handle_key_press(GTK_TEXT_VIEW(view), event)) {
+			return TRUE;
+		}
+
 		break;
 	case GDK_Page_Up:
 	case GDK_Page_Down:
@@ -188,7 +195,7 @@ static gboolean cb_key_press_event(GtkWidget *view, GdkEventKey *event)
 		else
 			indent_multi_line_indent(GTK_TEXT_VIEW(view)->buffer);
 		return TRUE;
-	}
+	}	
 	keyval = event->keyval;
 	if ((event->state & GDK_CONTROL_MASK)
 		|| (event->keyval == GDK_Control_L)

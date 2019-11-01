@@ -20,9 +20,8 @@
 #ifndef _INDENT_NAVIGATION_H
 #define _INDENT_NAVIGATION_H
 
-void navigate_indent(GtkTextView *view, gint direction, gboolean outer_level, GtkTextIter *iter_param);
 gboolean indent_navigation_handle_scroll(GtkTextView *view, GdkEventScroll *event);
-gboolean indent_navigation_handle_arrow_key_press(GtkTextView *view, GdkEventKey *event);
+gboolean indent_navigation_handle_key_press(GtkTextView *view, GdkEventKey *event);
 gboolean indent_navigation_handle_button_press(GtkTextView *view, GdkEventButton *event);
 
 #endif /* __INDENT_NAVIGATION_H */
