@@ -202,16 +202,21 @@ static gboolean cb_key_press_event(GtkWidget *view, GdkEventKey *event)
 
 static gboolean cb_button_press_event(GtkWidget *view, GdkEventButton *event)
 {
-	GtkTextIter iter, start, end;
-	gint x, y;
-	
-	GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(view));
-	
 	if (indent_navigation_handle_button_press(GTK_TEXT_VIEW(view), event)) {
 		return TRUE;
 	}
-	
+
+	if ((event->button == 2) && (event->state == GDK_SHIFT_MASK)) {
+		indent_paste(GTK_TEXT_VIEW(view), TRUE);
+		return TRUE;
+	}
+
 	if ((event->button) == 3 && (event->type == GDK_BUTTON_PRESS)) {
+		GtkTextIter iter, start, end;
+		gint x, y;
+
+		GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(view));
+
 		gtk_text_view_window_to_buffer_coords(GTK_TEXT_VIEW(view),
 			gtk_text_view_get_window_type(GTK_TEXT_VIEW(view), event->window),
 			(gint)event->x, (gint)event->y, &x, &y);
@@ -220,7 +225,7 @@ static gboolean cb_button_press_event(GtkWidget *view, GdkEventButton *event)
 		if (!gtk_text_iter_in_range(&iter, &start, &end))
 			gtk_text_buffer_place_cursor(buffer, &iter);
 	}
-	
+
 	return FALSE;
 }
 
