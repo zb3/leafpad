@@ -75,7 +75,7 @@ static GtkItemFactoryEntry menu_items[] =
 	{ "/Edit/---", NULL,
 		NULL, 0, "<Separator>" },
 	{ N_("/Edit/Select _All"), "<control>A",
-		G_CALLBACK(on_edit_select_all), 0 },
+		G_CALLBACK(on_edit_select_all), 0, "<StockItem>", GTK_STOCK_SELECT_ALL },
 	{ "/Edit/---", NULL,
 		NULL, 0, "<Separator>" },
 	
