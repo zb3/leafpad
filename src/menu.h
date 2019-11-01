@@ -25,5 +25,6 @@ void menu_sensitivity_from_selection_bound(gboolean is_bound_exist);
 //void menu_sensitivity_from_clipboard(gboolean is_clipboard_exist);
 void menu_sensitivity_from_clipboard(void);
 GtkWidget *create_menu_bar(GtkWidget *window);
+void menu_populate_popup(GtkTextView *view, GtkMenu *menu, gpointer data);
 
 #endif /* _MENU_H */

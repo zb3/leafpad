@@ -367,6 +367,8 @@ GtkWidget *create_text_view(void)
 		G_CALLBACK(cb_focus_event), NULL);
 	g_signal_connect_after(G_OBJECT(view), "focus-out-event",
 		G_CALLBACK(cb_focus_event), NULL);
+	g_signal_connect_after(G_OBJECT(view), "populate-popup",
+		G_CALLBACK(menu_populate_popup), NULL);
 	
 	g_signal_connect(G_OBJECT(buffer), "mark-set",
 		G_CALLBACK(cb_mark_changed), NULL);

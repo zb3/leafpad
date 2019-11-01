@@ -217,3 +217,50 @@ GtkWidget *create_menu_bar(GtkWidget *window)
 	
 	return gtk_item_factory_get_widget(ifactory, "<main>");
 }
+
+void menu_populate_popup(GtkTextView *view, GtkMenu *menu, gpointer data)
+{
+	GList *items = gtk_container_get_children (GTK_CONTAINER(menu));
+	GtkMenuItem *paste_item = g_list_nth_data(items, 2);
+	gboolean can_paste = gtk_widget_get_sensitive(GTK_WIDGET(paste_item));
+	GtkWidget *menuitem;
+
+	menuitem = gtk_image_menu_item_new_with_mnemonic (_("Paste with i_ndent"));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), gtk_image_new_from_stock(GTK_STOCK_PASTE, GTK_ICON_SIZE_MENU));
+
+	gtk_widget_set_sensitive(menuitem, can_paste);
+	g_signal_connect(menuitem, "activate", G_CALLBACK(on_popup_paste_with_indent), NULL);
+	gtk_widget_show(menuitem);
+
+	gtk_menu_shell_insert(GTK_MENU_SHELL(menu), menuitem, 3);
+
+	menuitem = gtk_separator_menu_item_new();
+	gtk_widget_show(menuitem);
+	gtk_menu_shell_insert(GTK_MENU_SHELL(menu), menuitem, 7);
+
+	menuitem = gtk_image_menu_item_new_with_mnemonic (_("_Indent selection"));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), gtk_image_new_from_stock(GTK_STOCK_INDENT, GTK_ICON_SIZE_MENU));
+
+	g_signal_connect(menuitem, "activate", G_CALLBACK(on_popup_indent), NULL);
+	gtk_widget_show(menuitem);
+	gtk_menu_shell_insert(GTK_MENU_SHELL(menu), menuitem, 8);
+
+	menuitem = gtk_image_menu_item_new_with_mnemonic (_("_Unindent selection"));
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), gtk_image_new_from_stock(GTK_STOCK_UNINDENT, GTK_ICON_SIZE_MENU));
+
+	g_signal_connect(menuitem, "activate", G_CALLBACK(on_popup_unindent), NULL);
+	gtk_widget_show(menuitem);
+	gtk_menu_shell_insert(GTK_MENU_SHELL(menu), menuitem, 9);
+
+	menuitem = gtk_separator_menu_item_new();
+	gtk_widget_show(menuitem);
+	gtk_menu_shell_insert(GTK_MENU_SHELL(menu), menuitem, 10);
+
+	menuitem = gtk_menu_item_new_with_mnemonic (_("_Strip trailing whitespace"));
+	g_signal_connect(menuitem, "activate", G_CALLBACK(on_popup_strip_trailing_whitespace), NULL);
+	gtk_widget_show(menuitem);
+	gtk_menu_shell_insert(GTK_MENU_SHELL(menu), menuitem, 11);
+
+	g_list_free(items);
+}
+

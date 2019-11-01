@@ -391,3 +391,24 @@ void on_help_about(void)
 	gtk_widget_show(about);
 #endif
 }
+
+void on_popup_paste_with_indent(GtkMenuItem *menuitem, gpointer data)
+{
+	indent_paste(GTK_TEXT_VIEW(pub->mw->view), FALSE);
+}
+
+void on_popup_indent(GtkMenuItem *menuitem, gpointer data)
+{
+	indent_multi_line_indent(pub->mw->buffer);
+}
+
+void on_popup_unindent(GtkMenuItem *menuitem, gpointer data)
+{
+	indent_multi_line_unindent(pub->mw->buffer);
+}
+
+void on_popup_strip_trailing_whitespace(GtkMenuItem *menuitem, gpointer data)
+{
+	strip_trailing_whitespace(pub->mw->buffer);
+}
+
