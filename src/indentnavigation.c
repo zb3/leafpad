@@ -90,7 +90,7 @@ static void insert_indent_line_from_template(GtkTextBuffer *buffer, GtkTextIter 
 }
 
 static void navigate_indent_iter(GtkTextBuffer *buffer, GtkTextIter *iter, gint direction,
-								 gboolean outer_level, gboolean can_insert)
+								 gboolean outer_level, gboolean may_insert)
 {
 	gint total_lines = gtk_text_buffer_get_line_count(buffer);
 	gint base_line = gtk_text_iter_get_line(iter);
@@ -114,7 +114,7 @@ static void navigate_indent_iter(GtkTextBuffer *buffer, GtkTextIter *iter, gint 
 			break;
 	}
 
-	if (can_insert) {
+	if (may_insert) {
 		if (level < base_level) {
 			gboolean was_empty;
 
@@ -137,7 +137,7 @@ static void navigate_indent_iter(GtkTextBuffer *buffer, GtkTextIter *iter, gint 
 }
 
 void navigate_indent(GtkTextView *view, GtkTextIter *iter_param, gint direction,
-					 gboolean outer_level, gboolean can_insert)
+					 gboolean outer_level, gboolean may_insert)
 {
 	GtkTextBuffer *buff = gtk_text_view_get_buffer(view);
 	GtkTextIter iter;
@@ -152,7 +152,7 @@ void navigate_indent(GtkTextView *view, GtkTextIter *iter_param, gint direction,
 	}
 
 	gtk_text_view_get_line_yrange(view, &iter, &orig_y, NULL);
-	navigate_indent_iter(buff, &iter, direction, outer_level, can_insert);
+	navigate_indent_iter(buff, &iter, direction, outer_level, may_insert);
 
 	if (gtk_text_buffer_get_has_selection(buff))
 		gtk_text_buffer_move_mark_by_name(buff, "insert", &iter);
@@ -192,7 +192,7 @@ gboolean indent_navigation_handle_scroll(GtkTextView *view, GdkEventScroll *even
 
 gboolean indent_navigation_handle_key_press(GtkTextView *view, GdkEventKey *event) {
 	gboolean outer_level = FALSE;
-	gboolean force_insert = FALSE;
+	gboolean may_insert = FALSE;
 	gint direction = 1;
 
 	switch(event->state & MODIFIER_MASK) {
@@ -208,20 +208,20 @@ gboolean indent_navigation_handle_key_press(GtkTextView *view, GdkEventKey *even
 	if (event->keyval == GDK_Up)
 		direction = -1;
 	else if (event->keyval == GDK_Right || event->keyval == GDK_Insert) {
-		force_insert = TRUE;
+		may_insert = TRUE;
 		outer_level = FALSE;
 	}
 	else if (event->keyval != GDK_Down)
 		return FALSE;
 
-	navigate_indent(view, NULL, direction, outer_level, force_insert);
+	navigate_indent(view, NULL, direction, outer_level, may_insert);
 	return TRUE;
 }
 
 gboolean indent_navigation_handle_button_press(GtkTextView *view, GdkEventButton *event)
 {
 	gboolean outer_level = FALSE;
-	gboolean force_insert = FALSE;
+	gboolean may_insert = FALSE;
 	gint direction = 1;
 	gint buff_y;
 	GtkTextIter iter;
@@ -239,14 +239,14 @@ gboolean indent_navigation_handle_button_press(GtkTextView *view, GdkEventButton
 	if (event->button == 1)
 		direction = -1;
 	else if (!outer_level && event->button == 2)
-		force_insert = TRUE;
+		may_insert = TRUE;
 	else if (event->button != 3)
 		return FALSE;
 
 	gtk_text_view_window_to_buffer_coords(view, GTK_TEXT_WINDOW_WIDGET, event->x, event->y, NULL, &buff_y);
 	gtk_text_view_get_line_at_y(view, &iter, buff_y, NULL);
 
-	navigate_indent(view, &iter, direction, outer_level, force_insert);
+	navigate_indent(view, &iter, direction, outer_level, may_insert);
 	return TRUE;
 }
 

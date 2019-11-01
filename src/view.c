@@ -195,7 +195,7 @@ static gboolean cb_key_press_event(GtkWidget *view, GdkEventKey *event)
 		else
 			indent_multi_line_indent(GTK_TEXT_VIEW(view)->buffer);
 		return TRUE;
-	}	
+	}
 	keyval = event->keyval;
 	if ((event->state & GDK_CONTROL_MASK)
 		|| (event->keyval == GDK_Control_L)
