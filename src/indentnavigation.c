@@ -122,10 +122,15 @@ static void navigate_indent_iter(GtkTextBuffer *buffer, GtkTextIter *iter, gint 
 			// but if a blank line with proper indent level already exists, just move there
 			for (;;) {
 				line -= direction;
-				if (line == base_line)
-					break;
-
 				level = get_indent_level_and_iter(buffer, iter, line, FALSE, &was_empty);
+
+				if (line == base_line) {
+				    // if this non-blank line is our base line, discard this level
+				    // because we need to insert a new line below
+				    level = -1;
+					break;
+				}
+
 				if (!was_empty || level == base_level)
 					break;
 			}
