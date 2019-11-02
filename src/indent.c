@@ -45,7 +45,7 @@ static gchar *compute_indentation(GtkTextBuffer *buffer, GtkTextIter *iter, gint
 {
 	GtkTextIter start_iter, end_iter;
 	gunichar ch;
-	
+
 	gtk_text_buffer_get_iter_at_line(buffer, &start_iter, line);
 	end_iter = start_iter;
 	ch = gtk_text_iter_get_char(&end_iter);
@@ -56,7 +56,7 @@ static gchar *compute_indentation(GtkTextBuffer *buffer, GtkTextIter *iter, gint
 	}
 	if (gtk_text_iter_equal(&start_iter, &end_iter))
 		return NULL;
-	
+
 	if (iter && gtk_text_iter_compare(iter, &end_iter) < 0)
 		return gtk_text_iter_get_text(&start_iter, iter);
 	return gtk_text_iter_get_text(&start_iter, &end_iter);
@@ -66,10 +66,10 @@ static gunichar first_char_in_line(GtkTextBuffer *buffer, gint line)
 {
 	GtkTextIter iter;
 	gunichar ch;
-	
+
 	gtk_text_buffer_get_iter_at_line(buffer, &iter, line);
 	ch = gtk_text_iter_get_char(&iter);
-	
+
 	return ch;
 }
 
@@ -77,14 +77,14 @@ void indent_real(GtkWidget *text_view)
 {
 	GtkTextIter iter;
 	gchar *ind, *str;
-	
+
 	GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
-	
+
 	g_signal_emit_by_name(G_OBJECT(buffer), "begin-user-action");
-	
+
 	// interactive must be FALSE here, otherwise it 'll emit the end-user-action signal
 	gtk_text_buffer_delete_selection(buffer, FALSE, TRUE);
-	
+
 	gtk_text_buffer_get_iter_at_mark(buffer, &iter, gtk_text_buffer_get_insert(buffer));
 	ind = compute_indentation(buffer, &iter, gtk_text_iter_get_line(&iter));
 	str = g_strconcat("\n", ind, NULL);
@@ -92,7 +92,7 @@ void indent_real(GtkWidget *text_view)
 	g_signal_emit_by_name(G_OBJECT(buffer), "end-user-action");
 	g_free(str);
 	g_free(ind);
-	
+
 	gtk_text_view_scroll_mark_onscreen(
 		GTK_TEXT_VIEW(text_view),
 		gtk_text_buffer_get_insert(buffer));
@@ -110,7 +110,7 @@ static gint calculate_real_tab_width(GtkWidget *text_view, guint tab_size) //fro
 	tab_string = g_strnfill(tab_size, 0x20);
 	layout = gtk_widget_create_pango_layout(text_view, tab_string);
 	g_free (tab_string);
-	
+
 	if (layout != NULL) {
 		pango_layout_get_pixel_size(layout, &tab_width, NULL);
 		g_object_unref(G_OBJECT(layout));
@@ -123,7 +123,7 @@ static gint calculate_real_tab_width(GtkWidget *text_view, guint tab_size) //fro
 void indent_refresh_tab_width(GtkWidget *text_view)
 {
 	PangoTabArray *tab_array;
-	
+
 	tab_array = pango_tab_array_new(1, TRUE);
 	pango_tab_array_set_tab(tab_array, 0, PANGO_TAB_LEFT,
 		calculate_real_tab_width(text_view, current_tab_width));
@@ -154,18 +154,18 @@ void indent_multi_line_indent(GtkTextBuffer *buffer)
 	GtkTextIter start_iter, end_iter, iter;
 	gint start_line, end_line, i;
 	gboolean selection_rtl;
-	
+
 	gtk_text_buffer_get_selection_bounds(buffer, &start_iter, &end_iter);
 	start_line = gtk_text_iter_get_line(&start_iter);
-	
+
 	end_line = gtk_text_iter_get_line(&end_iter);
 	gint end_offset = gtk_text_iter_get_line_offset(&end_iter);
-	
+
 	if (end_offset) end_line++;
-	
+
 	gtk_text_buffer_get_iter_at_mark(buffer, &iter, gtk_text_buffer_get_insert(buffer));
 	selection_rtl = gtk_text_iter_equal(&iter, &start_iter);
-	
+
 
 	gchar *indent = first_char_in_line(buffer, start_line) == '\t' ? "\t" : " ";
 
@@ -178,12 +178,12 @@ void indent_multi_line_indent(GtkTextBuffer *buffer)
 		undo_set_sequency(TRUE);
 	}
 	undo_set_sequency(FALSE);
-	
-	
+
+
 	gtk_text_buffer_get_iter_at_line(buffer, &start_iter, start_line);
-	
+
 	gint line_count = gtk_text_buffer_get_line_count(buffer);
-	
+
 	if (end_line < line_count) {
 		gtk_text_buffer_get_iter_at_line(buffer, &end_iter, end_line);
 	} else {
@@ -205,17 +205,17 @@ void indent_multi_line_unindent(GtkTextBuffer *buffer)
 	GtkTextIter start_iter, end_iter, iter;
 	gint start_line, end_line, i;
 	gboolean selection_rtl;
-	
+
 	gtk_text_buffer_get_selection_bounds(buffer, &start_iter, &end_iter);
 	start_line = gtk_text_iter_get_line(&start_iter);
-	
+
 	end_line = gtk_text_iter_get_line(&end_iter);
 	gint end_offset = gtk_text_iter_get_line_offset(&end_iter);
-	
+
 	if (end_offset) end_line++;
-	
+
 	gtk_text_buffer_get_iter_at_mark(buffer, &iter, gtk_text_buffer_get_insert(buffer));
-	
+
 	selection_rtl = gtk_text_iter_equal(&iter, &start_iter);
 
 
@@ -223,11 +223,11 @@ void indent_multi_line_unindent(GtkTextBuffer *buffer)
 	for (i = start_line; i < end_line; i++) {
 		gunichar first_char = first_char_in_line(buffer, i);
 		gchar *indent = first_char == ' ' ? " " : first_char == '\t' ? "\t" : NULL;
-		
+
 		if (!indent) continue;
-	
+
 		gtk_text_buffer_get_iter_at_line(buffer, &start_iter, i);
-		
+
 		end_iter = start_iter;
 		gtk_text_iter_forward_char(&end_iter);
 
@@ -237,18 +237,18 @@ void indent_multi_line_unindent(GtkTextBuffer *buffer)
 		undo_set_sequency(TRUE);
 	}
 	undo_set_sequency(FALSE);
-	
-	
+
+
 	gtk_text_buffer_get_iter_at_line(buffer, &start_iter, start_line);
-	
+
 	gint line_count = gtk_text_buffer_get_line_count(buffer);
-	
+
 	if (end_line < line_count) {
 		gtk_text_buffer_get_iter_at_line(buffer, &end_iter, end_line);
 	} else {
 		gtk_text_buffer_get_end_iter(buffer, &end_iter);
 	}
-	
+
 	if (selection_rtl) {
 		gtk_text_buffer_place_cursor(buffer, &end_iter);
 		gtk_text_buffer_move_mark_by_name(buffer, "insert", &start_iter);
@@ -264,15 +264,20 @@ typedef struct {
 
 } IndentPasteData;
 
-static gint compute_text_base_indent_level(const gchar *text)
+static gint compute_text_indent_and_lines(const gchar *text, gint *line_count_ptr)
 {
 	gint min_indent = -1, cur_indent = 0;
+	gint line_count = 1;
 	gchar ch;
 
 	while((ch = *text)) {
-		if (ch == '\r' || ch == '\n')
+		if (ch == '\r' || ch == '\n') {
+			if (ch == '\r' && *(text+1) == '\n')
+				text++;
+
 			cur_indent = 0;
-		else if (cur_indent >=0 && (ch == ' ' || ch == '\t'))
+			line_count++;
+		} else if (cur_indent >=0 && (ch == ' ' || ch == '\t'))
 			cur_indent++;
 		else if (cur_indent != -1) {
 			if (min_indent == -1 || cur_indent < min_indent)
@@ -284,6 +289,9 @@ static gint compute_text_base_indent_level(const gchar *text)
 		text++;
 	}
 
+	if (line_count_ptr)
+		*line_count_ptr = line_count;
+
 	return min_indent == -1 ? 0 : min_indent;
 }
 
@@ -292,10 +300,13 @@ static void do_indent_paste(GtkTextView *view, GtkTextBuffer *buffer, const gcha
 	GtkTextIter iter, start, end;
 	const gchar *text_ptr = text;
 	const gchar *text_line_start = text;
+	gchar *new_text, *new_text_ptr;
 	gint base_indent;
 	gint insert_len;
 	gboolean first_line_inserted = FALSE;
+	gint line_count;
 	gchar *indent;
+	gint indent_length = 0;
 	gchar ch;
 
 	// all lengths here are in bytes, but text is assumed to be utf8 encoded
@@ -305,13 +316,19 @@ static void do_indent_paste(GtkTextView *view, GtkTextBuffer *buffer, const gcha
 
 	if (gtk_text_buffer_get_selection_bounds(buffer, &start, &end)) {
 		gtk_text_buffer_delete(buffer, &start, &end);
-		undo_set_sequency(FALSE);
+		undo_set_sequency(TRUE);
 	}
 
 	gtk_text_buffer_get_iter_at_mark(buffer, &iter, gtk_text_buffer_get_insert(buffer));
 	indent = compute_indentation(buffer, &iter, gtk_text_iter_get_line(&iter));
 
-	base_indent = compute_text_base_indent_level(text);
+	if (indent)
+		indent_length = strlen(indent);
+
+	base_indent = compute_text_indent_and_lines(text, &line_count);
+
+	new_text = g_malloc(strlen(text) + line_count*indent_length);
+	new_text_ptr = new_text;
 
 	for(;;) {
 		ch = *text_ptr;
@@ -324,8 +341,8 @@ static void do_indent_paste(GtkTextView *view, GtkTextBuffer *buffer, const gcha
 			// we want it to do so
 			if (indent) {
 				if (first_line_inserted) {
-					gtk_text_buffer_insert(buffer, &iter, indent, -1);
-					undo_set_sequency(TRUE);
+					memcpy(new_text_ptr, indent, indent_length);
+					new_text_ptr += indent_length;
 				} else
 					first_line_inserted = TRUE;
 			}
@@ -345,9 +362,8 @@ static void do_indent_paste(GtkTextView *view, GtkTextBuffer *buffer, const gcha
 			if (ch)
 				insert_len++;
 
-			gtk_text_buffer_insert(buffer, &iter, text_line_start, insert_len);
-			undo_set_sequency(TRUE);
-
+			memcpy(new_text_ptr, text_line_start, insert_len);
+			new_text_ptr += insert_len;
 			text_line_start = text_ptr+1;
 		}
 
@@ -357,10 +373,12 @@ static void do_indent_paste(GtkTextView *view, GtkTextBuffer *buffer, const gcha
 		text_ptr++;
 	}
 
+	gtk_text_buffer_insert(buffer, &iter, new_text, new_text_ptr-new_text);
 	g_signal_emit_by_name(G_OBJECT(buffer), "end-user-action");
 	undo_set_sequency(FALSE);
 
 	gtk_text_view_scroll_mark_onscreen(view, gtk_text_buffer_get_insert(buffer));
+	g_free(new_text);
 	g_free(indent);
 }
 
