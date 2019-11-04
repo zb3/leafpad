@@ -57,6 +57,7 @@ See the file `INSTALL` for more detailed information.
 | <kbd>Ctrl</kbd> + <kbd>X</kbd> | Cut | 
 | <kbd>Ctrl</kbd> + <kbd>C</kbd> | Copy | 
 | <kbd>Ctrl</kbd> + <kbd>V</kbd> | Paste | 
+| <kbd>Shift</kbd> + <kbd>Ctrl</kbd> + <kbd>V</kbd> | Paste with current indent | 
 | <kbd>Ctrl</kbd> + <kbd>A</kbd> | Select All | 
 | <kbd>Ctrl</kbd> + <kbd>F</kbd> | Find | 
 | <kbd>Ctrl</kbd> + <kbd>G</kbd> <br> <kbd>F3</kbd> | Find Next | 
@@ -70,4 +71,5 @@ See the file `INSTALL` for more detailed information.
 | <kbd>Shift</kbd> + <kbd>Ctrl</kbd> + <kbd>R</kbd> | Strip trailing whitespace | 
 | <kbd>Ctrl</kbd> + Scroll Up/Down <br> <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>Up</kbd> / <kbd>Down</kbd><br> <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + Left/Right click | Jump to the previous/next line with the same or lower (whichever occurs first)<br>indentation level as the current (or clicked) line. |
 | <kbd>Shift</kbd> + <kbd>Alt</kbd> + Scroll Up/Down <br> <kbd>Shift</kbd> + <kbd>Alt</kbd> + <kbd>Up</kbd> / <kbd>Down</kbd> <br> <kbd>Shift</kbd> + <kbd>Alt</kbd> + Left/Right click | Jump to the previous/next line with an indentation level lower than the current (or clicked) line. |
+| <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>Insert</kbd> | Try to jump to the next line with current indentation level, but if a non-blank line with lower<br>indentation level comes first, insert a new line with current indentation level after that line |
 
